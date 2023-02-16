@@ -21,7 +21,7 @@ slope, intercept, _, _, _ = linregress(np.arange(len(x)), x)
 trendline_y = slope * np.arange(len(x)) + intercept
 
 # Plot the values and the trendline
-plt.plot(np.arange(len(x)), x, '-', label='data')
+plt.plot(np.arange(len(x)), x, '.', label='data')
 plt.plot(np.arange(len(x)), trendline_y, label='trendline')
 plt.legend()
 plt.xlabel('Index')

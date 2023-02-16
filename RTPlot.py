@@ -4,40 +4,30 @@ Code written by ChatGPT on Feb 15 2022
 """
 
 import matplotlib.pyplot as plt
-from matplotlib import animation
 import numpy as np
 
 
-# Define the function that will plot the data in real-time
-def plot_real_time(prediction, load):
-    # Define a fixed length of data to show in the plot
-    plot_length = 50
+def update_plot(prediction, load):
+    # Initialize or update x and y data arrays
+    if not hasattr(update_plot, 'x_data'):
+        update_plot.x_data = np.array([0])
+        update_plot.y_data1 = np.array([prediction])
+        update_plot.y_data2 = np.array([load])
+    else:
+        update_plot.x_data = np.append(update_plot.x_data, update_plot.x_data[-1] + 1)
+        update_plot.y_data1 = np.append(update_plot.y_data1, prediction)
+        update_plot.y_data2 = np.append(update_plot.y_data2, load)
 
-    # Initialize the plot and set the x-axis limits
-    fig, ax = plt.subplots()
-    ax.set_ylim([0, 1])
-    ax.set_xlim([0, plot_length])
+    # Clear the previous plot and create a new one
+    plt.clf()
+    plt.plot(update_plot.x_data, update_plot.y_data1, label='Prediction')
+    plt.plot(update_plot.x_data, update_plot.y_data2, label='Load')
+    plt.legend()
 
-    # Create the line object to plot the data
-    line, = ax.plot([], [])
+    # Set the plot limits based on the current x and y data
+    plt.xlim([update_plot.x_data[0], update_plot.x_data[-1]])
+    plt.ylim([min(update_plot.y_data1.min(), update_plot.y_data2.min()),
+              max(update_plot.y_data1.max(), update_plot.y_data2.max())])
 
-    # Create a buffer to hold the data for the plot
-    buffer = np.zeros(plot_length)
-
-    # Define a function to update the plot with new data
-    def update(frame):
-        # Append the new data to the buffer
-        buffer[:-1] = buffer[1:]
-        buffer[-1] = prediction / load
-
-        # Update the line object with the new data
-        line.set_data(np.arange(plot_length), buffer)
-
-        # Return the line object
-        return line,
-
-    # Animate the plot with the update function and a frame interval of 50 milliseconds
-    ani = animation.FuncAnimation(fig, update, interval=50, blit=True)
-
-    # Show the plot
-    plt.show()
+    # Display the updated plot
+    plt.pause(0.01)
