@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def update_plot(prediction, load):
+def update_plot(prediction, load, window_size=100):
     # Initialize or update x and y data arrays
     if not hasattr(update_plot, 'x_data'):
         update_plot.x_data = np.array([0])
@@ -18,14 +18,17 @@ def update_plot(prediction, load):
         update_plot.y_data1 = np.append(update_plot.y_data1, prediction)
         update_plot.y_data2 = np.append(update_plot.y_data2, load)
 
+    # Calculate the index of the first x-axis value to include in the window
+    window_start = max(0, update_plot.x_data[-1] - window_size)
+
     # Clear the previous plot and create a new one
     plt.clf()
-    plt.plot(update_plot.x_data, update_plot.y_data1, label='Prediction')
-    plt.plot(update_plot.x_data, update_plot.y_data2, label='Load')
+    plt.plot(update_plot.x_data[window_start:], update_plot.y_data1[window_start:], label='Prediction')
+    plt.plot(update_plot.x_data[window_start:], update_plot.y_data2[window_start:], label='Load')
     plt.legend()
 
-    # Set the plot limits based on the current x and y data
-    plt.xlim([update_plot.x_data[0], update_plot.x_data[-1]])
+    # Set the plot limits based on the current x and y data and the window size
+    plt.xlim([update_plot.x_data[window_start], update_plot.x_data[-1]])
     plt.ylim([min(update_plot.y_data1.min(), update_plot.y_data2.min()),
               max(update_plot.y_data1.max(), update_plot.y_data2.max())])
 
